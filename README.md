@@ -1,10 +1,10 @@
 # CRUD-node-express-postgres-ejs
 
-- `Pastikan sebelum memulai tutorial ini kalian telah menginstall`
+- Pastikan sebelum memulai tutorial ini kalian telah menginstall
   ['node.js'](https://nodejs.org/en/)
   ['postgresql'](https://www.postgresql.org/)
-- `jalankan npm init -y untuk membuat package json yang sebagai tempat depedency kalian`
-- `setelah itu install module yang akan kalian butuhkan pada latihan kali ini saya akan menggunakan `express`, `pg`, `ejs`. setelah itu saya akan mengistall module nodemon secara global`
+- jalankan npm `init -y` untuk membuat package json sebagai tempat depedency kalian
+- setelah itu install module yang akan kalian butuhkan pada latihan kali ini saya akan menggunakan `express`, `pg`, `ejs`. setelah itu saya akan mengistall module nodemon secara global
 
 setelah mengikuti tahapan diatas maka tampilan folder kita kurang lebih akan seperti ini
 
@@ -43,7 +43,7 @@ module.exports = pool
 ```
 
 - setelah selesai, buat file `setup.js` masih di dalam folder config
-- file setup.js nantinya yang akan membuatkan tabel pada aplikasi kita
+- file setup.js nantinya yang akan digunakan membuat tabel pada aplikasi kita
 
 #### code 2
 
@@ -55,12 +55,12 @@ const pool = require('../config/conn')
  const dropTable = `DROP TABLE IF EXISTS "Employees"`;
 
  const createEmployee = `CREATE TABLE "Employees" (
-	"id" SERIAL PRIMARY KEY,
+    "id" SERIAL PRIMARY KEY,
 	"name" VARCHAR ( 50 ) NOT NULL,
 	"position" VARCHAR ( 50 ) NOT NULL,
-  "phone" INT NOT NULL,
+    "phone" INT NOT NULL,
 	"email" VARCHAR ( 255 ) NOT NULL,
-  "address" VARCHAR (255) NOT NULL,
+    "address" VARCHAR (255) NOT NULL,
 	created_on TIMESTAMP NOT NULL,
         last_login TIMESTAMP
 )`;
@@ -89,3 +89,66 @@ pool.query(dropTable, (err, res) => {
 | phone    | INT          | NOT NULL    |
 | email    | VARCHAR(255) | NOT NULL    |
 | address  | VARCHAR(255) | NOT NULL    |
+
+setelah database dan tabel selesai dibuat kita akan mulai membuat server, routes, model, view dan controller. hingga tampilan folder akan seperti ini
+
+```
+├── config
+│   └── conn.js
+│   └── setupDB.js
+├── controllers
+│   └── Controller.js
+├── models
+│   └── EmployeeModel.js
+├── node_modules
+│   └── ...
+├── routes
+│   └── employee.js
+│   └── index.js
+├── views
+│   └── AddEmployee.ejs
+│   └── EditEmployee.ejs
+│   └── EmployeeList.ejs
+│   └── Home.ejs
+├── app.js
+├── package-lock.json
+├── node_modules
+│   └── ...
+├── package.json
+└── package-lock.json
+```
+
+tuliskan code berikut di `app.js`
+
+#### code 2
+
+```Javascript
+// file app.js
+// import module express
+const express = require('express')
+const app = express()
+
+// Setting Port
+const port = 3000
+
+//import routes dari folder routes/index.js
+const route = require('./routes/index')
+
+
+// setup untuk view engine ejs
+app.set('view engine', 'ejs');
+
+// Setting middleware bodyParser
+app.use(express.urlencoded({
+    extended:true
+}))
+
+// route diline 18 merefer pada routes/index.js
+app.use('/', route)
+
+// ini untuk menjalan wxpress pada port 3000
+app.listen(port, () => {
+  console.log(`Example app listening at http://localhost:${port}`)
+})
+
+```
